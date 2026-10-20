@@ -1,6 +1,6 @@
 {
-  "name": "Code Calculator",
-  "short_name": "CodeCalc",
+  "name": "Emon Code Calculator",
+  "short_name": "EmonCalc",
   "description": "Simple calculator for collection codes",
   "start_url": "./index.html",
   "scope": "./",

@@ -1,18 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Code Calculator</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Emon Code Calculator</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1f2937">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<style>body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.app{width:100%;max-width:620px;background:#fff;border-radius:18px;box-shadow:0 12px 35px #0002;overflow:hidden}.head{background:#1f2937;color:#fff;padding:22px}.head h1{margin:0 0 5px}.head p{margin:0;color:#cbd5e1;font-size:13px}.content{padding:20px}.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}.menu button{padding:12px;border:1px solid #d5dce6;border-radius:10px;background:#f8fafc;font-weight:700;cursor:pointer}.menu button.active{background:#2563eb;color:#fff;border-color:#2563eb}.label{font-weight:700;font-size:13px;color:#475569;display:block;margin-bottom:7px}input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font-size:17px;box-sizing:border-box}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.info{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.small{font-size:12px;color:#64748b}.big{margin-top:4px;font-size:18px;font-weight:800}.status{margin-top:14px;padding:11px;border-radius:10px;background:#f8fafc;font-size:14px}.result{margin-top:15px;border:1px solid #e2e8f0;border-radius:14px;padding:18px;background:#f8fafc}.title{font-size:13px;color:#64748b}.code{font-size:30px;font-weight:800;margin-top:7px;word-break:break-all}.formula{font-size:14px;color:#64748b;margin-top:7px}.copy{width:100%;margin-top:13px;padding:11px;border:0;border-radius:9px;background:#10b981;color:white;font-weight:700;cursor:pointer}.note{margin-top:14px;font-size:12px;color:#64748b;line-height:1.5}@media(max-width:500px){.code{font-size:24px}}</style>
+<style>
+body{margin:0;font-family:Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(-45deg,#eef2f7,#dbeafe,#e0e7ff,#eef2f7,#dbeafe);background-size:400% 400%;animation:bgShift 18s ease infinite}
+.app{width:100%;max-width:620px;background:#fff;border-radius:18px;box-shadow:0 12px 35px #0002;overflow:hidden;animation:appIn .7s cubic-bezier(.2,.8,.2,1) backwards}
+.head{background:linear-gradient(135deg,#1f2937,#111827);color:#fff;padding:22px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;letter-spacing:1px;color:#fff;animation:logoIn .9s .1s cubic-bezier(.2,.8,.2,1) backwards,logoGlow 3.5s 1.2s ease-in-out infinite}
+.head h1{margin:0 0 5px;font-size:22px;letter-spacing:.5px;animation:fadeUp .8s .45s ease backwards}
+.head p{margin:0;color:#cbd5e1;font-size:13px;animation:fadeUp .8s .75s ease backwards}
+.content{padding:20px}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.menu button{padding:12px;border:1px solid #d5dce6;border-radius:10px;background:#f8fafc;font-weight:700;cursor:pointer;transition:transform .15s ease,box-shadow .25s ease,background .25s ease,color .25s ease,border-color .25s ease;animation:fadeUp .5s ease backwards}
+.menu button:nth-child(1){animation-delay:.9s}.menu button:nth-child(2){animation-delay:.96s}.menu button:nth-child(3){animation-delay:1.02s}.menu button:nth-child(4){animation-delay:1.08s}.menu button:nth-child(5){animation-delay:1.14s}.menu button:nth-child(6){animation-delay:1.2s}
+.menu button:hover,.menu button:focus-visible{box-shadow:0 0 0 3px rgba(37,99,235,.15),0 6px 16px rgba(37,99,235,.22);outline:none}
+.menu button:active{transform:scale(.95)}
+.menu button.active{background:#2563eb;color:#fff;border-color:#2563eb;box-shadow:0 0 16px rgba(37,99,235,.55)}
+.view.in{animation:viewIn .4s ease both}
+.view.out{animation:viewOut .2s ease forwards}
+.label{font-weight:700;font-size:13px;color:#475569;display:block;margin-bottom:7px}
+input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font-size:17px;box-sizing:border-box;transition:box-shadow .25s ease,border-color .25s ease}
+input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.info{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+.grid .info:nth-child(1){animation-delay:1.3s}.grid .info:nth-child(2){animation-delay:1.38s}.grid .info:nth-child(3){animation-delay:1.46s}.grid .info:nth-child(4){animation-delay:1.54s}
+.small{font-size:12px;color:#64748b}
+.big{margin-top:4px;font-size:18px;font-weight:800}
+.status{margin-top:14px;padding:11px;border-radius:10px;background:#f8fafc;font-size:14px;animation:rise .6s 1.6s cubic-bezier(.2,.8,.2,1) backwards}
+.result{margin-top:15px;border:1px solid #e2e8f0;border-radius:14px;padding:18px;background:#f8fafc;animation:rise .7s 1.7s cubic-bezier(.2,.8,.2,1) backwards}
+.title{font-size:13px;color:#64748b}
+.code{font-size:30px;font-weight:800;margin-top:7px;word-break:break-all;font-variant-numeric:tabular-nums}
+.code.pop,.formula.pop{animation:codePop .45s ease}
+.formula{font-size:14px;color:#64748b;margin-top:7px}
+.copy{width:100%;margin-top:13px;padding:11px;border:0;border-radius:9px;background:#10b981;color:white;font-weight:700;cursor:pointer;transition:transform .15s ease,box-shadow .25s ease}
+.copy:hover,.copy:focus-visible{box-shadow:0 0 16px rgba(16,185,129,.55);outline:none}
+.copy:active{transform:scale(.97)}
+.note{margin-top:14px;font-size:12px;color:#64748b;line-height:1.5;animation:fadeUp .6s 1.9s ease backwards}
+.about h2{margin:0 0 12px;font-size:20px;color:#1f2937}
+.about h3{margin:20px 0 8px;font-size:15px;color:#1f2937}
+.about p{margin:0 0 10px;font-size:14px;line-height:1.6;color:#334155}
+.about ul{margin:0 0 6px;padding-left:20px}
+.about li{font-size:14px;line-height:1.6;color:#334155;margin-bottom:6px}
+.about .meta{margin-top:14px;padding:14px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc}
+.about .meta p{margin:0 0 4px;font-size:13px}
+.about .copyright{margin-top:14px;font-size:12px;color:#64748b;text-align:center}
+.back{margin-top:16px;width:100%;padding:11px;border:1px solid #d5dce6;border-radius:10px;background:#f8fafc;font-weight:700;cursor:pointer;transition:transform .15s ease,box-shadow .25s ease}
+.back:hover,.back:focus-visible{box-shadow:0 0 0 3px rgba(37,99,235,.15),0 6px 16px rgba(37,99,235,.22);outline:none}
+.back:active{transform:scale(.97)}
+@keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes appIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes logoIn{from{opacity:0;transform:scale(.4) rotate(-14deg)}to{opacity:1;transform:none}}
+@keyframes logoGlow{0%,100%{box-shadow:0 0 0 0 rgba(96,165,250,0)}50%{box-shadow:0 0 18px 2px rgba(96,165,250,.55)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes viewIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes viewOut{to{opacity:0;transform:translateY(-8px)}}
+@keyframes codePop{from{opacity:.35;transform:scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:500px){.code{font-size:24px}.head h1{font-size:18px}.logo{width:44px;height:44px;font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
-<body><div class="app"><div class="head"><h1>Code Calculator</h1><p>Simple calculator for your collection codes</p></div><div class="content">
-<div class="menu"><button id="previousBtn" onclick="setMode('previous')">Previous Collection</button><button id="agingBtn" onclick="setMode('aging')">Aging</button><button id="addBtn" onclick="setMode('add')">Add Collector</button><button id="editBtn" onclick="setMode('edit')">Edit Collector</button><button id="overwriteBtn" onclick="setMode('overwrite')" style="grid-column:1 / -1">Daily Code (Overwrite)</button></div>
+<body>
+<div class="app">
+<div class="head"><div class="brand"><div class="logo">EC</div><div><h1>EMON CODE CALCULATOR</h1><p>Simple calculator for your collection codes</p></div></div></div>
+<div class="content">
+<div class="menu">
+<button id="previousBtn" onclick="setMode('previous')">Previous Collection</button>
+<button id="agingBtn" onclick="setMode('aging')">Aging</button>
+<button id="addBtn" onclick="setMode('add')">Add Collector</button>
+<button id="editBtn" onclick="setMode('edit')">Edit Collector</button>
+<button id="overwriteBtn" onclick="setMode('overwrite')">Daily Code (Overwrite)</button>
+<button id="aboutBtn" onclick="showAbout()">About</button>
+</div>
+
+<div id="calcView" class="view">
 <label class="label">Select Date</label><input type="date" id="dateInput" onchange="calculate()">
 <div class="grid"><div class="info"><div class="small">Today</div><div class="big" id="today">-</div></div><div class="info"><div class="small">Multiplier</div><div class="big" id="multiplier">-</div></div><div class="info"><div class="small">Day</div><div class="big" id="day">-</div></div><div class="info"><div class="small">Day Code</div><div class="big" id="dayCode">-</div></div></div>
-<div class="status" id="status">-</div><div class="result"><div class="title" id="resultTitle">Previous Collection</div><div class="code" id="resultCode">-</div><div class="formula" id="formula">-</div><button class="copy" onclick="copyCode()">Copy Code</button></div>
+<div class="status" id="status">-</div>
+<div class="result"><div class="title" id="resultTitle">Previous Collection</div><div class="code" id="resultCode">-</div><div class="formula" id="formula">-</div><button class="copy" onclick="copyCode()">Copy Code</button></div>
 <div class="note">Monday=2, Tuesday=3, Wednesday=4, Thursday=5, Friday=6, Saturday=7. Sunday has no collection. Multiplier is today date + 1, so 30 becomes 31 and 31 becomes 32.</div>
+</div>
+
+<div id="aboutView" class="view about" hidden>
+<h2>About Emon Code Calculator</h2>
+<p>Code Calculator is a simple, convenient, and user-friendly application designed to make calculations faster and easier. It provides a practical tool for users who need quick, accurate, and organized calculations in their daily tasks.</p>
+<p>Designed with simplicity and accessibility in mind, Code Calculator offers a straightforward interface that helps users perform calculations efficiently using their devices.</p>
+<h3>Key Features</h3>
+<ul>
+<li><strong>Easy-to-Use Interface</strong> – Simple and user-friendly design for convenient navigation.</li>
+<li><strong>Fast Calculations</strong> – Perform calculations quickly and efficiently.</li>
+<li><strong>Convenient Access</strong> – Use the application on supported devices.</li>
+<li><strong>Progressive Web App (PWA)</strong> – Install the application on compatible devices for convenient access.</li>
+<li><strong>Mobile-Friendly Design</strong> – Designed to work across supported desktop and mobile browsers.</li>
+</ul>
+<h3>Our Goal</h3>
+<p>Our goal is to provide a reliable, accessible, and easy-to-use calculation tool that helps users save time and improve productivity.</p>
+<div class="meta">
+<p><strong>Application Name:</strong> Code Calculator</p>
+<p><strong>Application Type:</strong> Progressive Web App (PWA)</p>
+<p><strong>Version:</strong> 1.0</p>
+<p><strong>Developed in:</strong> 2026</p>
+<p><strong>Developed by:</strong> Raymond Garcia (Freelance Software Developer)</p>
+</div>
+<div class="copyright">© 2026 Code Calculator. All rights reserved.</div>
+<button class="back" onclick="setMode(mode)">← Back to Calculator</button>
+</div>
+
 </div></div>
-<script>let mode='previous';const dayCodes={1:2,2:3,3:4,4:5,5:6,6:7};const names={previous:'Previous Collection',aging:'Aging',add:'Add Collector',edit:'Edit Collector',overwrite:'Daily Code (Overwrite)'};function localDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}function setMode(m){mode=m;document.querySelectorAll('.menu button').forEach(x=>x.classList.remove('active'));document.getElementById(m+'Btn').classList.add('active');calculate()}function calculate(){const v=document.getElementById('dateInput').value;if(!v)return;const [y,m,d]=v.split('-').map(Number),date=new Date(y,m-1,d),w=date.getDay(),dayName=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][w],code=dayCodes[w],ymd=Number(''+y+String(m).padStart(2,'0')+String(d).padStart(2,'0')),mult=d+1;document.getElementById('today').textContent=ymd;document.getElementById('multiplier').textContent=mult;document.getElementById('day').textContent=dayName;document.getElementById('dayCode').textContent=code===undefined?'N/A':code;document.getElementById('resultTitle').textContent=names[mode];if(code===undefined){document.getElementById('status').textContent='Sunday - No Collection';document.getElementById('resultCode').textContent='NO COLLECTION';document.getElementById('formula').textContent='No code is generated on Sunday.';return}document.getElementById('status').textContent=dayName+' - Day Code: '+code;let result,formula;if(mode==='previous'){result=(ymd*mult+code)*7;formula='('+ymd+' × '+mult+' + '+code+') × 7'}else if(mode==='aging'){result=ymd*mult+code;formula=ymd+' × '+mult+' + '+code}else if(mode==='add'){result=ymd*mult+code;formula=ymd+' × '+mult+' + '+code}else if(mode==='overwrite'){result=ymd*mult+code-321;formula='('+ymd+' × '+mult+' + '+code+') − 321'}else{result=ymd*mult;formula=ymd+' × '+mult}document.getElementById('resultCode').textContent=result.toString();document.getElementById('formula').textContent=formula}function copyCode(){const text=document.getElementById('resultCode').textContent;if(text==='-'||text==='NO COLLECTION')return;navigator.clipboard.writeText(text).then(()=>alert('Code copied: '+text)).catch(()=>alert('Please copy the code manually.'))}window.onload=()=>{document.getElementById('dateInput').value=localDate(new Date());setMode('previous')};if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
-</body></html>
+<script>
+let mode='previous',currentView='calc',viewToken=0,raf=0,finalText='-';
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dayCodes={1:2,2:3,3:4,4:5,5:6,6:7};
+const names={previous:'Previous Collection',aging:'Aging',add:'Add Collector',edit:'Edit Collector',overwrite:'Daily Code (Overwrite)'};
+const $=id=>document.getElementById(id);
+
+function localDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+function pop(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+
+function showView(name,cb){
+  if(name===currentView){if(cb)cb();return}
+  const prev=$(currentView+'View');
+  currentView=name;
+  const token=++viewToken;
+  prev.classList.add('out');
+  setTimeout(()=>{
+    if(token!==viewToken)return;
+    ['calc','about'].forEach(v=>{const el=$(v+'View');el.classList.remove('out','in');el.hidden=(v!==currentView)});
+    $(currentView+'View').classList.add('in');
+    if(cb)cb();
+  },reduced?0:200);
+}
+
+function setActive(id){document.querySelectorAll('.menu button').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+
+function setMode(m){mode=m;setActive(m+'Btn');showView('calc',calculate)}
+function showAbout(){setActive('aboutBtn');showView('about')}
+
+function countTo(target){
+  const el=$('resultCode');
+  cancelAnimationFrame(raf);
+  if(reduced||target===0){el.textContent=String(target);return}
+  const start=performance.now(),dur=900;
+  function step(t){
+    const p=Math.min((t-start)/dur,1),e=1-Math.pow(1-p,3);
+    if(p<1){el.textContent=String(Math.round(target*e));raf=requestAnimationFrame(step)}
+    else el.textContent=String(target);
+  }
+  raf=requestAnimationFrame(step);
+}
+
+function calculate(){
+  const v=$('dateInput').value;
+  if(!v)return;
+  const [y,m,d]=v.split('-').map(Number),date=new Date(y,m-1,d),w=date.getDay();
+  const dayName=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][w];
+  const code=dayCodes[w],ymd=Number(''+y+String(m).padStart(2,'0')+String(d).padStart(2,'0')),mult=d+1;
+  $('today').textContent=ymd;
+  $('multiplier').textContent=mult;
+  $('day').textContent=dayName;
+  $('dayCode').textContent=code===undefined?'N/A':code;
+  $('resultTitle').textContent=names[mode];
+  pop($('formula'));
+  if(code===undefined){
+    cancelAnimationFrame(raf);
+    $('status').textContent='Sunday - No Collection';
+    finalText='NO COLLECTION';
+    $('resultCode').textContent=finalText;
+    pop($('resultCode'));
+    $('formula').textContent='No code is generated on Sunday.';
+    return;
+  }
+  $('status').textContent=dayName+' - Day Code: '+code;
+  let result,formula;
+  if(mode==='previous'){result=(ymd*mult+code)*7;formula='('+ymd+' × '+mult+' + '+code+') × 7'}
+  else if(mode==='aging'){result=ymd*mult+code;formula=ymd+' × '+mult+' + '+code}
+  else if(mode==='add'){result=ymd*mult+code;formula=ymd+' × '+mult+' + '+code}
+  else if(mode==='overwrite'){result=ymd*mult+code-321;formula='('+ymd+' × '+mult+' + '+code+') − 321'}
+  else{result=ymd*mult;formula=ymd+' × '+mult}
+  finalText=String(result);
+  pop($('resultCode'));
+  countTo(result);
+  $('formula').textContent=formula;
+}
+
+function copyCode(){
+  if(finalText==='-'||finalText==='NO COLLECTION')return;
+  navigator.clipboard.writeText(finalText).then(()=>alert('Code copied: '+finalText)).catch(()=>alert('Please copy the code manually.'));
+}
+
+window.onload=()=>{$('dateInput').value=localDate(new Date());setMode('previous')};
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+</body>
+</html>
